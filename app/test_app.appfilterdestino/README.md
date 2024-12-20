@@ -1,24 +1,24 @@
 ## Application Details
 |               |
 | ------------- |
-|**Generation Date and Time**<br>Tue Dec 17 2024 08:07:13 GMT+0000 (Coordinated Universal Time)|
+|**Generation Date and Time**<br>Fri Dec 20 2024 09:28:46 GMT+0000 (Coordinated Universal Time)|
 |**App Generator**<br>@sap/generator-fiori-elements|
-|**App Generator Version**<br>1.15.7|
+|**App Generator Version**<br>1.16.1|
 |**Generation Platform**<br>SAP Business Application Studio|
 |**Template Used**<br>List Report Page V4|
 |**Service Type**<br>Local Cap|
 |**Service URL**<br>http://localhost:4004/service/tEST_APP/|
-|**Module Name**<br>test_app.appfilter|
-|**Application Title**<br>AppFilter|
+|**Module Name**<br>test_app.appfilterdestino|
+|**Application Title**<br>AppFilterDestino|
 |**Namespace**<br>|
 |**UI5 Theme**<br>sap_horizon|
 |**UI5 Version**<br>1.120.13|
 |**Enable Code Assist Libraries**<br>False|
 |**Enable TypeScript**<br>False|
 |**Add Eslint configuration**<br>False|
-|**Main Entity**<br>CompanyCodes|
+|**Main Entity**<br>FilteredData|
 
-## test_app.appfilter
+## test_app.appfilterdestino
 
 My SAP application
 
@@ -26,7 +26,7 @@ My SAP application
 
 -   This app has been generated using the SAP Fiori tools - App Generator, as part of the SAP Fiori tools suite.  In order to launch the generated app, simply start your CAP project and navigate to the following location in your browser:
 
-http://localhost:4004/test_app.appfilter/webapp/index.html
+http://localhost:4004/test_app.appfilterdestino/webapp/index.html
 
 #### Pre-requisites:
 

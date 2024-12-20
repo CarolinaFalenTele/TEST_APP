@@ -1,3 +1,190 @@
+const cds = require('@sap/cds');
+const { executeHttpRequest } = require('@sap-cloud-sdk/http-client'); // SDK para llamar a destinos
+
+
+(async () => {
+  try {
+    console.log('Iniciando el servicio...');
+
+    // Intentar conectarse al servicio 'destination_test'
+    const destinationService = await cds.connect.to('destination_test');
+
+    // Validar que la conexión fue exitosa
+    if (destinationService) {
+      console.log('Conexión exitosa al servicio destination_test.');
+    } else {
+      console.log('La conexión al servicio destination_test no fue exitosa.');
+    }
+  } catch (error) {
+    console.error('Error al conectar con el servicio destination_test:', error.message);
+  }
+})();
+
+
+
+module.exports = cds.service.impl(async function () {
+    this.on('READ', 'FilteredData', async (req) => {
+        try {
+            // 1. Configurar la parte relativa de la URL y los parámetros
+            const servicePath = 'ZPIFA_SRV/ZPIFA';
+            const queryParams = {
+                "A0CIIM_CALMONTH": "12.2024",
+                "A0CIIM_CALMONTHTo": "12.2024",
+                "A0CISO_RECONTRACT": "",
+                "A0CISO_RECONTRACTTo": "",
+                "A0CISO_CONTRTYPE": "",
+                "A0CISO_CONTRTYPETo": "",
+                "A0CISO_RECDTYPE": "",
+                "A0CISO_RECDTYPETo": "",
+                "ZVAR_M_COMP_CODE": ""
+            };
+
+            // Construir la query OData relativa
+            const queryString = `(${Object.entries(queryParams)
+                .map(([key, value]) => `${key}='${value}'`)
+                .join(",")})/Results`;
+
+            // 2. Llamar al destination configurado en SAP BTP
+            const response = await executeHttpRequest(
+                { destinationName: 'destination_test' }, // Nombre del destination
+                {
+                    method: 'GET',
+                    url: `${servicePath}${queryString}` // URL relativa
+                }
+            );
+
+            // 3. Obtener los datos de la respuesta
+            const jsonData = response.data;
+
+            // Verificar si la estructura del JSON es válida
+            if (!jsonData || !jsonData.d || !jsonData.d.results || !Array.isArray(jsonData.d.results)) {
+                req.error(500, 'La estructura del JSON recibido no es válida. Se esperaba un array en "d.results".');
+                return;
+            }
+
+            // 4. Mapeo de nombres de campos antiguos a nuevos
+            const fieldMapping = {
+                "ID": "ID",
+                "A0COMP_CODE": "CompanyCode",       // Sin espacios
+                "A0RECONTRACT": "Contract",
+                "A0REOBJECT_T": "RealEstateObject", // Sin espacios
+                "A0CONDPURP_T": "ConditionPurpose", // Sin espacios
+                "ZRE_CCTYP": "ConditionType"        // Sin espacios
+            };
+
+            // 5. Filtrar y renombrar los datos
+            const cleanedData = jsonData.d.results.map((item) => {
+                const cleanedItem = {};
+                for (const key in item) {
+                    if (fieldMapping[key]) {
+                        const cleanKey = fieldMapping[key]; // Nuevo nombre
+                        cleanedItem[cleanKey] = item[key]; // Asignar valor
+                    }
+                }
+                return cleanedItem;
+            });
+
+            // 6. Devolver los datos limpios
+            return cleanedData;
+
+        } catch (error) {
+            console.error('Error al procesar la consulta desde el destination:', error);
+            req.error(500, `Error interno al leer los datos: ${error.message}`);
+        }
+    });
+});
+
+
+/*const cds = require('@sap/cds');
+
+async function connectToDestination() {
+    try {
+        console.log('Iniciando la conexión al servicio de destino...');
+
+        // Intentar conectarse al destino configurado
+        const destinationService = await cds.connect.to('destination_test');
+        console.log('Conexión exitosa con Destination_TEST');
+
+        // Endpoint OData con parámetros para la consulta
+        const query = "/ZPIFA(A0CIIM_CALMONTH='12.2024',A0CIIM_CALMONTHTo='12.2024',A0CISO_RECONTRACT='',A0CISO_RECONTRACTTo='',A0CISO_CONTRTYPE='',A0CISO_CONTRTYPETo='',A0CISO_RECDTYPE='',A0CISO_RECDTYPETo='',ZVAR_M_COMP_CODE='')/Results";
+
+        // Realizar la consulta
+        const testResponse = await destinationService.get(query); 
+
+        console.log('Respuesta del servicio:', testResponse);
+    } catch (error) {
+        console.error('Error al conectar o realizar la consulta:', error.message);
+    }
+}
+
+connectToDestination();
+
+
+
+module.exports = cds.service.impl(async function () {
+
+    // 1. Conectar al destino configurado 'Destination_TEST'
+    const destinationService = await cds.connect.to('destination_test');
+    console.log('Conexión exitosa con Destination_TEST');
+
+    // 2. Realizar la consulta OData con los parámetros específicos
+    this.on('READ', 'FilteredData', async (req) => {
+        try {
+            // Definir los parámetros de la consulta OData
+            const odataQuery = "/ZPIFA(A0CIIM_CALMONTH='12.2024',A0CIIM_CALMONTHTo='12.2024'," +
+                                "A0CISO_RECONTRACT='',A0CISO_RECONTRACTTo='',A0CISO_CONTRTYPE='',A0CISO_CONTRTYPETo='',A0CISO_RECDTYPE='',A0CISO_RECDTYPETo='',ZVAR_M_COMP_CODE='')/Results";
+            
+            // Ejecutar la consulta OData
+            const response = await destinationService.get(odataQuery);
+
+            if (!response || !response.d || !response.d.results) {
+                req.error(500, 'No se encontraron resultados en la respuesta del servicio');
+                return;
+            }
+
+            // Convertir los resultados (pueden ser XML, dependiendo de la configuración)
+            const xmlData = response.d.results; // Asumimos que los datos vienen en XML
+
+            // Si el contenido es XML, podemos convertirlo a JSON para manipularlo más fácilmente
+            const parser = new xml2js.Parser({ explicitArray: false });
+            parser.parseString(xmlData, (err, result) => {
+                if (err) {
+                    req.error(500, `Error al convertir XML a JSON: ${err.message}`);
+                    return;
+                }
+
+                const jsonData = result.d.results; // Ahora los datos están en formato JSON
+
+                if (!jsonData || !Array.isArray(jsonData)) {
+                    req.error(500, 'La estructura de datos no es válida.');
+                    return;
+                }
+
+                // 3. Procesar y devolver los datos filtrados o transformados
+                const cleanedData = jsonData.map((item) => {
+                    // Aquí puedes mapear los campos según tu necesidad
+                    const cleanedItem = {
+                        ID: item.ID,
+                        CompanyCode: item.A0COMP_CODE,
+                        Contract: item.A0RECONTRACT,
+                        RealEstateObject: item.A0REOBJECT_T,
+                        ConditionPurpose: item.A0CONDPURP_T,
+                        ConditionType: item.ZRE_CCTYP
+                    };
+                    return cleanedItem;
+                });
+
+                // Devolver los datos procesados
+                return cleanedData;
+            });
+        } catch (error) {
+            console.error('Error al procesar la consulta OData:', error);
+            req.error(500, `Error al obtener los datos: ${error.message}`);
+        }
+    });
+});*/
+
+
 
 
 /*const axios = require('axios');

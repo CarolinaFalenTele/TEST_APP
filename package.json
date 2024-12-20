@@ -18,7 +18,7 @@
     "express": "^4",
     "fast-xml-parser": "^4.5.0",
     "hdb": "^0.19.10",
-    "node-fetch": "^3.3.2",
+    "node-fetch": "^2.7.0",
     "passport": "^0.7.0",
     "uuid": "^11.0.3",
     "xml2js": "^0.6.2"
@@ -36,7 +36,8 @@
     "cds-watch": "cds watch --open",
     "watch-TEST_APP.viewtes": "cds watch --open TEST_APP.viewtes/webapp/index.html?sap-ui-xx-viewCache=false",
     "watch-TEST_APP.view": "cds watch --open TEST_APP.view/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-test_app.pruebaapp": "cds watch --open test_app.pruebaapp/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-test_app.pruebaapp": "cds watch --open test_app.pruebaapp/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-test_app.appfilterdestino": "cds watch --open test_app.appfilterdestino/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "sql": {
@@ -69,6 +70,7 @@
   "lcap": true,
   "sapux": [
     "app/test_app.pruebaapp",
-    "app/test_app.pruebaapp"
+    "app/test_app.pruebaapp",
+    "app/test_app.appfilterdestino"
   ]
 }

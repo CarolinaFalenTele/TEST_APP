@@ -1,7 +1,7 @@
 {
   "_version": "1.60.0",
   "sap.app": {
-    "id": "testapp.appfilter",
+    "id": "testapp.appfilterdestino",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -12,8 +12,8 @@
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:lrop",
-      "version": "1.15.7",
-      "toolsId": "41d3ac07-1915-486d-a906-aa546bae06a0"
+      "version": "1.16.1",
+      "toolsId": "5dda80f1-783d-47bd-8d43-27a1472906b1"
     },
     "dataSources": {
       "mainService": {
@@ -27,8 +27,8 @@
     },
     "crossNavigation": {
       "inbounds": {
-        "testappappfilter-display": {
-          "semanticObject": "testappappfilter",
+        "testappappfilterdestino-display": {
+          "semanticObject": "testappappfilterdestino",
           "action": "display",
           "title": "{{flpTitle}}",
           "signature": {
@@ -73,7 +73,7 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "testapp.appfilter.i18n.i18n"
+          "bundleName": "testapp.appfilterdestino.i18n.i18n"
         }
       },
       "": {
@@ -98,28 +98,28 @@
       "routes": [
         {
           "pattern": ":?query:",
-          "name": "CompanyCodesList",
-          "target": "CompanyCodesList"
+          "name": "FilteredDataList",
+          "target": "FilteredDataList"
         },
         {
-          "pattern": "CompanyCodes({key}):?query:",
-          "name": "CompanyCodesObjectPage",
-          "target": "CompanyCodesObjectPage"
+          "pattern": "FilteredData({key}):?query:",
+          "name": "FilteredDataObjectPage",
+          "target": "FilteredDataObjectPage"
         }
       ],
       "targets": {
-        "CompanyCodesList": {
+        "FilteredDataList": {
           "type": "Component",
-          "id": "CompanyCodesList",
+          "id": "FilteredDataList",
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "contextPath": "/CompanyCodes",
+              "contextPath": "/FilteredData",
               "variantManagement": "Page",
               "navigation": {
-                "CompanyCodes": {
+                "FilteredData": {
                   "detail": {
-                    "route": "CompanyCodesObjectPage"
+                    "route": "FilteredDataObjectPage"
                   }
                 }
               },
@@ -133,14 +133,14 @@
             }
           }
         },
-        "CompanyCodesObjectPage": {
+        "FilteredDataObjectPage": {
           "type": "Component",
-          "id": "CompanyCodesObjectPage",
+          "id": "FilteredDataObjectPage",
           "name": "sap.fe.templates.ObjectPage",
           "options": {
             "settings": {
               "editableHeaderContent": false,
-              "contextPath": "/CompanyCodes"
+              "contextPath": "/FilteredData"
             }
           }
         }

@@ -8,9 +8,9 @@ sap.ui.define(['sap/fe/test/ListReport'], function(ListReport) {
 
     return new ListReport(
         {
-            appId: 'testapp.appfilter',
-            componentId: 'CompanyCodesList',
-            contextPath: '/CompanyCodes'
+            appId: 'testapp.appfilterdestino',
+            componentId: 'FilteredDataList',
+            contextPath: '/FilteredData'
         },
         CustomPageDefinitions
     );
